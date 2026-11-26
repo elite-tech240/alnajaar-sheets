@@ -80,13 +80,13 @@ export function CheckoutForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
     <label key={id} htmlFor={id} className={`flex flex-col gap-1.5 text-sm font-medium ${full ? "w-full" : "flex-[1_1_220px]"}`}>
       {label}
       <input id={id} name={id} type={type} autoComplete={auto} dir={ltr ? "ltr" : undefined} aria-invalid={!!errors[id]} aria-describedby={errors[id] ? `${id}-err` : undefined} className={`${input} ${ltr ? "text-start" : ""}`} />
-      {errors[id] && <span id={`${id}-err`} className="text-[13px] font-medium text-[#B4462B]">{errors[id]}</span>}
+      {errors[id] && <span id={`${id}-err`} className="animate-slide-up text-[13px] font-medium text-[#B4462B]">{errors[id]}</span>}
     </label>
   );
 
   return (
     <form onSubmit={onSubmit} noValidate className="mx-auto flex max-w-[1240px] flex-wrap items-start gap-8 px-6 pb-20 pt-10">
-      <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-5">
+      <div className="stagger flex min-w-0 flex-[999_1_560px] flex-col gap-5">
         <h1 className="font-display text-4xl">{d.checkout}</h1>
 
         <fieldset className="flex flex-col gap-4 rounded-2xl bg-white p-6 md:p-7">
@@ -150,8 +150,9 @@ export function CheckoutForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
           <div className="flex justify-between"><span className="text-body">{d.shipping}</span><span className={shipping === 0 ? "font-semibold text-[#1E6B3A]" : ""}>{shipping === 0 ? d.free : formatPrice(shipping, lang)}</span></div>
           <div className="flex justify-between pt-1.5 text-xl font-bold"><span>{d.total}</span><span>{formatPrice(total, lang)}</span></div>
         </div>
-        {serverError && <p role="alert" className="rounded-xl bg-[#F8E3DD] p-3.5 text-sm font-medium text-[#8E3420]">{serverError}</p>}
-        <button type="submit" disabled={busy || !ready} className="h-14 rounded-xl bg-ink text-[17px] font-bold text-gold-pale hover:bg-ink-2 disabled:opacity-60">
+        {serverError && <p role="alert" className="animate-slide-up rounded-xl bg-[#F8E3DD] p-3.5 text-sm font-medium text-[#8E3420]">{serverError}</p>}
+        <button type="submit" disabled={busy || !ready} className="flex h-14 items-center justify-center gap-2.5 rounded-xl bg-ink text-[17px] font-bold text-gold-pale transition hover:bg-ink-2 active:scale-[0.98] disabled:opacity-60">
+          {busy && <span aria-hidden="true" className="size-5 animate-spin rounded-full border-2 border-gold-pale/30 border-t-gold-pale" />}
           {busy ? d.placing : d.placeOrder}
         </button>
       </aside>

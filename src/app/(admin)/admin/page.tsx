@@ -74,11 +74,11 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-3">
-        <Link href="/admin/orders?status=new" className="flex items-center gap-3 rounded-[14px] border border-[#E2DDD2] bg-white p-4 hover:border-ink">
+        <Link href="/admin/orders?status=new" className="flex items-center gap-3 rounded-[14px] border border-[#E2DDD2] bg-white p-4 transition hover:-translate-y-0.5 hover:border-ink hover:shadow-md">
           <span className="flex size-[42px] items-center justify-center rounded-[10px] bg-[#FBEFD5] font-bold text-[#7A5300]">{toShip}</span>
           <span className="flex flex-col"><span className="font-semibold">{tr("طلبات مستنية شحن", "Orders to ship")}</span><span className="text-[13px] text-muted">{tr("جديد أو اتجهّز", "New or packed")}</span></span>
         </Link>
-        <Link href="/admin/products?filter=low" className="flex items-center gap-3 rounded-[14px] border border-[#E2DDD2] bg-white p-4 hover:border-ink">
+        <Link href="/admin/products?filter=low" className="flex items-center gap-3 rounded-[14px] border border-[#E2DDD2] bg-white p-4 transition hover:-translate-y-0.5 hover:border-ink hover:shadow-md">
           <span className="flex size-[42px] items-center justify-center rounded-[10px] bg-[#F8E3DD] font-bold text-[#8E3420]">{low.length}</span>
           <span className="flex flex-col"><span className="font-semibold">{tr("مخزون قليل", "Low stock")}</span><span className="text-[13px] text-muted">{tr("5 قطع أو أقل", "5 or fewer left")}</span></span>
         </Link>
@@ -92,7 +92,7 @@ export default function Dashboard() {
         ].map(([l, v]) => (
           <Card key={l} className="flex flex-col gap-2 !p-5">
             <span className="text-sm text-muted">{l}</span>
-            <span className="text-[26px] font-bold">{orders ? v : "—"}</span>
+            {orders ? <span className="animate-fade-in text-[26px] font-bold">{v}</span> : <span className="skeleton block h-8 w-28" />}
           </Card>
         ))}
       </div>
@@ -103,7 +103,7 @@ export default function Dashboard() {
           <div role="img" aria-label={tr("رسم المبيعات اليومية", "Daily sales chart")} className="flex h-[220px] items-end gap-1.5 border-b border-[#E2DDD2] md:gap-3">
             {byDay.map((d, i) => (
               <div key={i} className="flex h-full flex-1 flex-col items-center justify-end" title={formatPrice(d.total, lang)}>
-                <div className={`w-full max-w-12 rounded-t-md ${i === byDay.length - 1 ? "bg-gold" : "bg-[#2B3A47]"}`} style={{ height: `${Math.max(2, (d.total / maxDay) * 200)}px` }} />
+                <div className={`bar-grow w-full max-w-12 rounded-t-md ${i === byDay.length - 1 ? "bg-gold" : "bg-[#2B3A47]"}`} style={{ animationDelay: `${i * 40}ms`, height: `${Math.max(2, (d.total / maxDay) * 200)}px` }} />
               </div>
             ))}
           </div>
@@ -119,7 +119,7 @@ export default function Dashboard() {
           {top.map(([name, qty]) => (
             <div key={name} className="flex flex-col gap-1.5">
               <div className="flex justify-between gap-2 text-sm"><span className="font-medium">{name}</span><span className="text-muted">{qty}</span></div>
-              <div className="h-2 rounded bg-[#EFEBE2]"><div className="h-2 rounded bg-gold" style={{ width: `${(qty / topMax) * 100}%` }} /></div>
+              <div className="h-2 rounded bg-[#EFEBE2]"><div className="bar-grow-x h-2 rounded bg-gold" style={{ width: `${(qty / topMax) * 100}%` }} /></div>
             </div>
           ))}
         </Card>

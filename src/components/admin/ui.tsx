@@ -34,8 +34,8 @@ export function Card({ className = "", children, ...rest }: React.HTMLAttributes
 }
 
 export const btn = {
-  primary: "inline-flex min-h-11 items-center justify-center rounded-[10px] bg-ink px-4 text-sm font-semibold text-gold-pale hover:bg-ink-2 disabled:opacity-50",
-  secondary: "inline-flex min-h-11 items-center justify-center rounded-[10px] border border-line-2 bg-white px-4 text-sm font-semibold text-ink hover:border-ink disabled:opacity-50",
+  primary: "inline-flex min-h-11 transition active:scale-[0.98] items-center justify-center rounded-[10px] bg-ink px-4 text-sm font-semibold text-gold-pale hover:bg-ink-2 disabled:opacity-50",
+  secondary: "inline-flex min-h-11 transition-colors items-center justify-center rounded-[10px] border border-line-2 bg-white px-4 text-sm font-semibold text-ink hover:border-ink disabled:opacity-50",
   danger: "inline-flex min-h-11 items-center justify-center rounded-[10px] border border-[#E5B3A6] bg-white px-4 text-sm font-semibold text-[#8E3420] disabled:opacity-50",
 };
 

@@ -31,6 +31,7 @@ export function BuyBox({ product, lang }: { product: Product; lang: Lang }) {
   const [size, setSize] = useState(firstInStock?.size_en ?? null);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
+  const [addedAt, setAddedAt] = useState(0);
 
   const variant = variants.find((v) => v.color_en === color && v.size_en === size) ?? null;
   const price = variant?.price ?? product.price;
@@ -52,7 +53,7 @@ export function BuyBox({ product, lang }: { product: Product; lang: Lang }) {
       maxQty: variant.stock,
     });
     if (goToCart) router.push(`/${lang}/cart`);
-    else setAdded(true);
+    else { setAdded(true); setAddedAt((n) => n + 1); }
   }
 
   const colorName = colors.find(([k]) => k === color)?.[1].label;
@@ -80,7 +81,7 @@ export function BuyBox({ product, lang }: { product: Product; lang: Lang }) {
                 aria-pressed={color === key}
                 title={c.label}
                 onClick={() => { setColor(key); setAdded(false); }}
-                className={`size-11 rounded-full ${color === key ? "border-2 border-white ring-2 ring-ink" : "border border-line-2"}`}
+                className={`size-11 rounded-full transition-transform hover:scale-110 ${color === key ? "border-2 border-white ring-2 ring-ink" : "border border-line-2"}`}
                 style={{ background: c.hex }}
               />
             ))}
@@ -101,7 +102,7 @@ export function BuyBox({ product, lang }: { product: Product; lang: Lang }) {
                   type="button"
                   aria-pressed={on}
                   onClick={() => { setSize(key); setQty(1); setAdded(false); }}
-                  className={`flex min-h-15 flex-col items-center justify-center gap-0.5 rounded-xl border px-2 py-1.5 ${on ? "border-ink bg-ink text-white" : "border-line-2 bg-white text-ink hover:border-ink"} ${out ? "opacity-50 line-through" : ""}`}
+                  className={`flex min-h-15 flex-col items-center justify-center gap-0.5 rounded-xl border transition-colors px-2 py-1.5 ${on ? "border-ink bg-ink text-white" : "border-line-2 bg-white text-ink hover:border-ink"} ${out ? "opacity-50 line-through" : ""}`}
                 >
                   <span className="text-[15px] font-semibold">{s.label}</span>
                   {s.dims && <span className="text-xs opacity-80" dir="ltr">{s.dims}</span>}
@@ -126,7 +127,7 @@ export function BuyBox({ product, lang }: { product: Product; lang: Lang }) {
           type="button"
           disabled={!variant || stock < 1}
           onClick={() => addToCart(false)}
-          className="h-14 flex-[1_1_220px] rounded-xl bg-ink text-[17px] font-bold text-gold-pale hover:bg-ink-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="h-14 flex-[1_1_220px] rounded-xl bg-ink transition active:scale-[0.98] text-[17px] font-bold text-gold-pale hover:bg-ink-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {d.addToCart}
         </button>
@@ -135,13 +136,13 @@ export function BuyBox({ product, lang }: { product: Product; lang: Lang }) {
         type="button"
         disabled={!variant || stock < 1}
         onClick={() => addToCart(true)}
-        className="h-14 rounded-xl bg-gold font-bold text-ink hover:bg-gold-light disabled:cursor-not-allowed disabled:opacity-50"
+        className="h-14 rounded-xl bg-gold font-bold transition active:scale-[0.98] text-ink hover:bg-gold-light disabled:cursor-not-allowed disabled:opacity-50"
       >
         {d.buyNow}
       </button>
 
       {added && (
-        <div role="status" className="flex items-center justify-between gap-4 rounded-xl bg-ink px-5 py-4 text-white">
+        <div role="status" key={addedAt} className="animate-slide-up flex items-center justify-between gap-4 rounded-xl bg-ink px-5 py-4 text-white">
           {d.added}
           <Link href={`/${lang}/cart`} className="font-bold text-gold-light">{d.viewCart}</Link>
         </div>

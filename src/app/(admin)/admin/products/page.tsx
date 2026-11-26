@@ -177,7 +177,7 @@ function ProductsInner() {
                 const n = total(p);
                 const img = imageUrl(p.images?.[0]);
                 return (
-                  <tr key={p.id} className={draft?.id === p.id ? "bg-[#FBF7EC]" : ""}>
+                  <tr key={p.id} className={`transition-colors ${draft?.id === p.id ? "bg-[#FBF7EC]" : "hover:bg-[#FAF8F3]"}`}>
                     <td className="border-b border-[#EFEBE2] px-3.5 py-2">
                       <button type="button" onClick={() => edit(p)} className="flex min-h-12 items-center gap-3 text-start">
                         <span className="relative size-11 shrink-0 overflow-hidden rounded-[10px] bg-linen-2">{img && <Image src={img} alt="" fill sizes="44px" className="object-cover" />}</span>
@@ -196,7 +196,7 @@ function ProductsInner() {
         </Card>
 
         {draft && (
-          <Card className="flex min-w-0 flex-[1_1_460px] flex-col gap-4">
+          <Card key={draft.id ?? "new"} className="animate-slide-up flex min-w-0 flex-[1_1_460px] flex-col gap-4">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-[22px] font-bold">{draft.id ? tr("تعديل منتج", "Edit product") : tr("منتج جديد", "New product")}</h2>
               {draft.id && draft.slug && <a href={`/${lang}/p/${draft.slug}`} target="_blank" rel="noreferrer" className="text-[13px] font-semibold text-gold-text">{tr("معاينة ↗", "Preview ↗")}</a>}
@@ -204,7 +204,7 @@ function ProductsInner() {
 
             <div className="grid grid-cols-4 gap-2">
               {draft.images.map((img, i) => (
-                <div key={img} className="relative aspect-square overflow-hidden rounded-[10px] bg-linen-2">
+                <div key={img} className="animate-fade-in relative aspect-square overflow-hidden rounded-[10px] bg-linen-2">
                   <Image src={imageUrl(img)!} alt="" fill sizes="120px" className="object-cover" />
                   <button type="button" aria-label={tr("شيلي الصورة", "Remove image")} onClick={() => set("images", draft.images.filter((_, n) => n !== i))} className="absolute end-1 top-1 flex size-8 items-center justify-center rounded-full bg-white/90 text-lg">×</button>
                   {i === 0 && <span className="absolute bottom-1 start-1 rounded bg-ink px-1.5 text-[11px] text-gold-light">{tr("الأساسية", "Main")}</span>}
@@ -250,7 +250,7 @@ function ProductsInner() {
                   </thead>
                   <tbody>
                     {rows.map((r) => (
-                      <tr key={r.key} className="border-t border-[#EFEBE2]">
+                      <tr key={r.key} className="animate-fade-in border-t border-[#EFEBE2]">
                         <td className="p-1.5"><input dir="rtl" aria-label={tr("مقاس بالعربي", "Size in Arabic")} value={r.size_ar} onChange={(e) => setRow(r.key, { size_ar: e.target.value })} className={`${inputCls} w-24`} /></td>
                         <td className="p-1.5"><input dir="ltr" aria-label={tr("مقاس بالإنجليزي", "Size in English")} value={r.size_en} onChange={(e) => setRow(r.key, { size_en: e.target.value })} className={`${inputCls} w-24`} /></td>
                         <td className="p-1.5"><input dir="ltr" aria-label={tr("الأبعاد", "Dimensions")} value={r.dims ?? ""} placeholder="180×200" onChange={(e) => setRow(r.key, { dims: e.target.value })} className={`${inputCls} w-24`} /></td>
@@ -274,7 +274,7 @@ function ProductsInner() {
               <label className="flex min-h-11 items-center gap-2.5 text-sm font-medium"><input type="checkbox" checked={draft.is_featured} onChange={(e) => set("is_featured", e.target.checked)} className="size-5 accent-ink" />{tr("يظهر في «الأكتر مبيعاً»", "Show in “Best sellers”")}</label>
             </div>
 
-            {msg && <p role="status" className={`rounded-lg p-3 text-sm ${msg.ok ? "bg-[#E1F0E6] text-[#1E6B3A]" : "bg-[#F8E3DD] text-[#8E3420]"}`}>{msg.text}</p>}
+            {msg && <p role="status" key={msg.text} className={`animate-slide-up rounded-lg p-3 text-sm ${msg.ok ? "bg-[#E1F0E6] text-[#1E6B3A]" : "bg-[#F8E3DD] text-[#8E3420]"}`}>{msg.text}</p>}
             <div className="flex gap-2">
               <button type="button" disabled={saving || uploading} onClick={save} className={`${btn.primary} flex-1`}>{saving ? tr("بنحفظ…", "Saving…") : tr("حفظ المنتج", "Save product")}</button>
               <button type="button" onClick={() => setDraft(null)} className={btn.secondary}>{tr("إغلاق", "Close")}</button>

@@ -46,7 +46,7 @@ export function Listing({ lang, products, cards }: { lang: Lang; products: Produ
   }, [products, size, color, sort]);
 
   const pill = (on: boolean) =>
-    `min-h-11 rounded-[10px] border px-3.5 text-sm font-semibold ${on ? "border-ink bg-ink text-white" : "border-line-2 bg-white text-ink hover:border-ink"}`;
+    `min-h-11 rounded-[10px] border px-3.5 text-sm font-semibold ${on ? "border-ink bg-ink text-white" : "border-line-2 bg-white text-ink hover:border-ink"} transition-colors`;
 
   return (
     <div className="flex flex-wrap items-start gap-8">
@@ -83,7 +83,7 @@ export function Listing({ lang, products, cards }: { lang: Lang; products: Produ
                   aria-pressed={color === key}
                   title={c.label}
                   onClick={() => setColor(color === key ? null : key)}
-                  className={`size-11 rounded-full ${color === key ? "border-2 border-white ring-2 ring-ink" : "border border-line-2"}`}
+                  className={`size-11 rounded-full transition-transform hover:scale-110 ${color === key ? "border-2 border-white ring-2 ring-ink" : "border border-line-2"}`}
                   style={{ background: c.hex }}
                 />
               ))}
@@ -107,7 +107,7 @@ export function Listing({ lang, products, cards }: { lang: Lang; products: Produ
         {visible.length === 0 ? (
           <p className="rounded-2xl bg-white p-10 text-center text-muted">{d.noResults}</p>
         ) : (
-          <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-[repeat(auto-fill,minmax(230px,1fr))] md:gap-6">
+          <div key={`${size}-${color}-${sort}`} className="stagger grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-[repeat(auto-fill,minmax(230px,1fr))] md:gap-6">
             {visible.map((p) => <div key={p.id}>{cards[p.id]}</div>)}
           </div>
         )}

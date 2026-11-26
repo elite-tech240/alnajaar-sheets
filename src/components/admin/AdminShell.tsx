@@ -80,7 +80,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             </button>
           </>
         ) : (
-          <p className="text-muted" role="status">{tr("بنحمّل…", "Loading…")}</p>
+          <div role="status" className="flex flex-col items-center gap-3"><ShieldMark size={44} /><span className="h-1 w-24 overflow-hidden rounded bg-line"><span className="block h-full w-1/2 animate-[loading_1s_ease-in-out_infinite] rounded bg-gold" /></span><span className="sr-only">{tr("بنحمّل…", "Loading…")}</span></div>
         )}
       </div>
     );
@@ -106,7 +106,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           {nav.map((n) => {
             const on = n.href === "/admin" ? pathname === "/admin" : pathname.startsWith(n.href);
             return (
-              <Link key={n.href} href={n.href} aria-current={on ? "page" : undefined} className={`flex min-h-11 items-center rounded-[10px] px-3 text-[15px] font-medium ${on ? "bg-ink-2 text-gold-light" : "hover:text-white"}`}>
+              <Link key={n.href} href={n.href} aria-current={on ? "page" : undefined} className={`flex min-h-11 items-center rounded-[10px] px-3 text-[15px] font-medium transition-colors ${on ? "bg-ink-2 text-gold-light" : "hover:text-white"}`}>
                 {n.label}
               </Link>
             );
@@ -126,7 +126,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             </div>
           </div>
         </nav>
-        <main className="flex min-w-0 flex-[999_1_640px] flex-col gap-6 px-5 py-7 md:px-8">{children}</main>
+        <main key={pathname} className="stagger flex min-w-0 flex-[999_1_640px] flex-col gap-6 px-5 py-7 md:px-8">{children}</main>
       </div>
     </Ctx>
   );

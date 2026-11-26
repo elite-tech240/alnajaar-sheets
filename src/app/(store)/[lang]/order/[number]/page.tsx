@@ -10,9 +10,9 @@ export default async function OrderDone({ params }: PageProps<"/[lang]/order/[nu
   if (!isLang(lang) || !/^\d{1,10}$/.test(number)) notFound();
   const d = t(lang);
   return (
-    <div className="mx-auto flex max-w-[640px] flex-col items-center gap-5 px-6 py-24 text-center">
+    <div className="stagger mx-auto flex max-w-[640px] flex-col items-center gap-5 px-6 py-24 text-center">
       <span className="flex size-[76px] items-center justify-center rounded-full bg-ink text-gold">
-        <CheckIcon className="size-9" />
+        <CheckIcon className="size-9 [stroke-dasharray:30] [stroke-dashoffset:30] animate-[draw_0.6s_0.35s_ease-out_forwards]" />
       </span>
       <h1 className="font-display text-4xl">{d.doneH}</h1>
       <p className="text-[17px] leading-relaxed text-body">{d.doneP(number)}</p>

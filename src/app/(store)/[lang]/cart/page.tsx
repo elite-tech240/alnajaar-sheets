@@ -24,7 +24,7 @@ export default function CartPage({ params }: PageProps<"/[lang]/cart">) {
         </div>
       ) : (
         <div className="flex flex-col gap-6">
-          <ul className="divide-y divide-line rounded-2xl bg-white">
+          <ul className="stagger divide-y divide-line rounded-2xl bg-white">
             {lines.map((l) => {
               const name = lang === "ar" ? l.name_ar : l.name_en;
               return (

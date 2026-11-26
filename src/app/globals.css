@@ -32,3 +32,66 @@ button {
   outline: 2px solid var(--color-gold-text);
   outline-offset: 2px;
 }
+
+/* ---------- Motion ---------- */
+@theme {
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-fade-up: fade-up 0.6s var(--ease-out-soft) both;
+  --animate-fade-in: fade-in 0.4s ease-out both;
+  --animate-pop: pop 0.35s var(--ease-out-soft);
+  --animate-slide-up: slide-up 0.35s var(--ease-out-soft) both;
+  --animate-shimmer: shimmer 1.4s linear infinite;
+}
+
+@keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes shimmer { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+@keyframes grow-y { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Stagger children: add .stagger to a list; each child fades up a little later. */
+.stagger > * { animation: var(--animate-fade-up); }
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 60ms; }
+.stagger > *:nth-child(3) { animation-delay: 120ms; }
+.stagger > *:nth-child(4) { animation-delay: 180ms; }
+.stagger > *:nth-child(5) { animation-delay: 240ms; }
+.stagger > *:nth-child(6) { animation-delay: 300ms; }
+.stagger > *:nth-child(n + 7) { animation-delay: 360ms; }
+
+/* Reveal on scroll (supported browsers); content stays visible elsewhere. */
+@supports (animation-timeline: view()) {
+  .reveal { animation: fade-up linear both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
+}
+
+.bar-grow { transform-origin: bottom; animation: grow-y 0.7s var(--ease-out-soft) both; }
+.bar-grow-x { transform-origin: inline-start; animation: grow-x 0.7s var(--ease-out-soft) both; }
+[dir="rtl"] .bar-grow-x { transform-origin: right; }
+[dir="ltr"] .bar-grow-x { transform-origin: left; }
+
+.skeleton {
+  background: linear-gradient(90deg, #ece7dd 25%, #f6f2ea 50%, #ece7dd 75%);
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+  border-radius: 10px;
+}
+
+/* Smooth page changes in browsers that support view transitions */
+@view-transition { navigation: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  @view-transition { navigation: none; }
+}
+
+html { scroll-behavior: smooth; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes loading { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }

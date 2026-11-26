@@ -19,10 +19,10 @@ export function ProductCard({ product, lang }: { product: Product; lang: Lang })
   const href = `/${lang}/p/${product.slug}`;
 
   return (
-    <article className="flex flex-col gap-2.5">
-      <Link href={href} className="relative block aspect-[4/5] overflow-hidden rounded-2xl bg-linen-2">
+    <article className="group flex flex-col gap-2.5">
+      <Link href={href} className="relative block aspect-[4/5] overflow-hidden rounded-2xl bg-linen-2 transition-shadow duration-300 group-hover:shadow-xl group-hover:shadow-ink/10">
         {img ? (
-          <Image src={img} alt={name} fill sizes="(min-width: 1024px) 300px, 50vw" className="object-cover" />
+          <Image src={img} alt={name} fill sizes="(min-width: 1024px) 300px, 50vw" className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
         ) : (
           <ImagePlaceholder label={name} />
         )}

@@ -27,7 +27,7 @@ export function Header({ lang, categories }: { lang: Lang; categories: NavCatego
           </Link>
           <nav aria-label={d.home} className="order-3 flex w-full flex-wrap gap-x-7 gap-y-2 text-[15px] font-medium md:order-none md:w-auto">
             {categories.map((c) => (
-              <Link key={c.slug} href={`/${lang}/c/${c.slug}`} className="py-2 hover:text-gold-light">
+              <Link key={c.slug} href={`/${lang}/c/${c.slug}`} className="relative py-2 transition-colors after:absolute after:inset-x-0 after:bottom-1 after:h-px after:origin-center after:scale-x-0 after:bg-gold after:transition-transform hover:text-gold-light hover:after:scale-x-100">
                 {c.name}
               </Link>
             ))}
@@ -44,7 +44,7 @@ export function Header({ lang, categories }: { lang: Lang; categories: NavCatego
             <Link href={`/${lang}/cart`} aria-label={`${d.cart}, ${ready ? count : 0}`} className="relative flex size-11 items-center justify-center">
               <BagIcon />
               {ready && count > 0 && (
-                <span className="absolute end-0.5 top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-gold px-1 text-[11px] font-bold text-ink">
+                <span key={count} className="animate-pop absolute end-0.5 top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-gold px-1 text-[11px] font-bold text-ink">
                   {count}
                 </span>
               )}

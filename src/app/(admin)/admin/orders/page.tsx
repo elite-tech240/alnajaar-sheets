@@ -87,7 +87,7 @@ function OrdersInner() {
         </label>
       </div>
 
-      {error && <p role="alert" className="rounded-lg bg-[#F8E3DD] p-3 text-sm text-[#8E3420]">{error}</p>}
+      {error && <p role="alert" className="animate-slide-up rounded-lg bg-[#F8E3DD] p-3 text-sm text-[#8E3420]">{error}</p>}
 
       <div className="flex flex-wrap items-start gap-4">
         <Card className="min-w-0 flex-[999_1_520px] overflow-x-auto !p-0">
@@ -95,7 +95,7 @@ function OrdersInner() {
             <thead><tr className="text-[13px] text-muted">{[tr("الطلب", "Order"), tr("التاريخ", "Date"), tr("العميل", "Customer"), tr("الدفع", "Payment"), tr("الحالة", "Status"), tr("الإجمالي", "Total")].map((h) => <th key={h} className="border-b border-[#E2DDD2] px-3 py-3.5 text-start font-medium">{h}</th>)}</tr></thead>
             <tbody>
               {visible.map((o) => (
-                <tr key={o.id} className={sel?.id === o.id ? "bg-[#FBF7EC]" : ""}>
+                <tr key={o.id} className={`transition-colors ${sel?.id === o.id ? "bg-[#FBF7EC]" : "hover:bg-[#FAF8F3]"}`}>
                   <td className="border-b border-[#EFEBE2] px-3"><button type="button" onClick={() => setSelId(o.id)} className="min-h-[52px] font-bold text-gold-text underline">#{o.order_number}</button></td>
                   <td className="border-b border-[#EFEBE2] px-3 text-body">{fmtDate(o.created_at, lang)}</td>
                   <td className="border-b border-[#EFEBE2] px-3">{o.customer_name}</td>
@@ -107,11 +107,11 @@ function OrdersInner() {
             </tbody>
           </table>
           {!loading && visible.length === 0 && <p className="p-10 text-center text-muted">{tr("مفيش طلبات هنا.", "No orders here.")}</p>}
-          {loading && <p className="p-10 text-center text-muted" role="status">{tr("بنحمّل…", "Loading…")}</p>}
+          {loading && <div role="status" className="flex flex-col gap-3 p-5">{[0, 1, 2, 3, 4].map((n) => <span key={n} className="skeleton h-10" />)}<span className="sr-only">{tr("بنحمّل…", "Loading…")}</span></div>}
         </Card>
 
         {sel && (
-          <Card aria-label={tr("تفاصيل الطلب", "Order details")} className="flex flex-[1_1_340px] flex-col gap-4">
+          <Card key={sel.id} aria-label={tr("تفاصيل الطلب", "Order details")} className="animate-slide-up flex flex-[1_1_340px] flex-col gap-4">
             <div className="flex items-start justify-between gap-3">
               <div className="flex flex-col gap-1"><h2 className="text-[22px] font-bold">{tr("طلب", "Order")} #{sel.order_number}</h2><span className="text-[13px] text-muted">{fmtDate(sel.created_at, lang)}</span></div>
               <Badge className={statusTone[sel.status]}>{statusLabel(sel.status, tr)}</Badge>
@@ -140,7 +140,7 @@ function OrdersInner() {
                 const done = sel.status !== "cancelled" && ["new", "packed", "shipped", "delivered"].indexOf(sel.status) >= i;
                 return (
                   <div key={s} className="flex items-center gap-3 text-sm">
-                    <span className={`size-3 rounded-full ${done ? "bg-gold" : "border-2 border-line-2 bg-white"}`} />
+                    <span className={`size-3 rounded-full transition-colors duration-500 ${done ? "bg-gold" : "border-2 border-line-2 bg-white"}`} />
                     <span className={done ? "font-medium" : "text-muted"}>{statusLabel(s, tr)}</span>
                   </div>
                 );

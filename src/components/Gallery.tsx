@@ -9,7 +9,7 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="relative aspect-square overflow-hidden rounded-3xl bg-linen-2">
-        {images[i] ? <Image src={images[i]} alt={alt} fill priority sizes="(min-width: 1024px) 600px, 100vw" className="object-cover" /> : <ImagePlaceholder label={alt} />}
+        {images[i] ? <Image key={images[i]} src={images[i]} alt={alt} fill priority sizes="(min-width: 1024px) 600px, 100vw" className="animate-fade-in object-cover" /> : <ImagePlaceholder label={alt} />}
       </div>
       {images.length > 1 && (
         <div className="grid grid-cols-4 gap-2.5">
@@ -20,7 +20,7 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
               aria-label={`${alt} ${n + 1}`}
               aria-pressed={i === n}
               onClick={() => setI(n)}
-              className={`relative aspect-square overflow-hidden rounded-xl border-2 ${i === n ? "border-ink" : "border-transparent"}`}
+              className={`relative aspect-square overflow-hidden rounded-xl border-2 transition-colors ${i === n ? "border-ink" : "border-transparent"}`}
             >
               <Image src={src} alt="" fill sizes="150px" className="object-cover" />
             </button>
