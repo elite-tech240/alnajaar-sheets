@@ -8,6 +8,7 @@ import { formatPrice } from "@/lib/i18n";
 import type { Category, Product, Variant } from "@/lib/types";
 import { useAdmin } from "@/components/admin/AdminShell";
 import { Badge, Card, btn, inputCls } from "@/components/admin/ui";
+import { PencilSimple, Trash } from "@phosphor-icons/react";
 
 type Filter = "all" | "active" | "low" | "out";
 type VRow = Omit<Variant, "id" | "product_id"> & { id?: string; key: string };
@@ -36,6 +37,36 @@ function ProductsInner() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [listMsg, setListMsg] = useState<string | null>(null);
+
+  async function toggleActive(p: Product) {
+    setBusyId(p.id);
+    setListMsg(null);
+    const next = !p.is_active;
+    setProducts((ps) => ps.map((x) => (x.id === p.id ? { ...x, is_active: next } : x)));
+    const { error } = await browserClient().from("products").update({ is_active: next }).eq("id", p.id);
+    setBusyId(null);
+    if (error) {
+      setProducts((ps) => ps.map((x) => (x.id === p.id ? { ...x, is_active: !next } : x)));
+      return setListMsg(tr("مقدرناش نغيّر حالة المنتج.", "Couldn't change the product status."));
+    }
+    if (draft?.id === p.id) setDraft((d) => (d ? { ...d, is_active: next } : d));
+  }
+
+  async function removeProduct(p: Product) {
+    const name = lang === "ar" ? p.name_ar : p.name_en;
+    if (!window.confirm(tr(`تمسحي «${name}» نهائياً؟ الطلبات القديمة هتفضل زي ما هي.`, `Delete “${name}” permanently? Past orders keep their details.`))) return;
+    setBusyId(p.id);
+    setListMsg(null);
+    const sb = browserClient();
+    const { error } = await sb.from("products").delete().eq("id", p.id);
+    setBusyId(null);
+    if (error) return setListMsg(tr("مقدرناش نمسح المنتج.", "Couldn't delete the product."));
+    if (p.images?.length) await sb.storage.from("product-images").remove(p.images.filter((x) => !x.startsWith("http")));
+    setProducts((ps) => ps.filter((x) => x.id !== p.id));
+    if (draft?.id === p.id) setDraft(null);
+  }
 
   const load = useCallback(async () => {
     const sb = browserClient();
@@ -168,10 +199,11 @@ function ProductsInner() {
         </div>
       </div>
 
+      {listMsg && <p role="alert" className="animate-slide-up rounded-lg bg-[#F8E3DD] p-3 text-sm text-[#8E3420]">{listMsg}</p>}
       <div className="flex flex-wrap items-start gap-4">
         <Card className="min-w-0 flex-[999_1_440px] overflow-x-auto !p-0">
-          <table className="w-full min-w-[520px] text-sm">
-            <thead><tr className="text-[13px] text-muted">{[tr("المنتج", "Product"), tr("السعر", "Price"), tr("المخزون", "Stock"), tr("الحالة", "Status")].map((h) => <th key={h} className="border-b border-[#E2DDD2] px-3.5 py-3.5 text-start font-medium">{h}</th>)}</tr></thead>
+          <table className="w-full min-w-[640px] text-sm">
+            <thead><tr className="text-[13px] text-muted">{[tr("المنتج", "Product"), tr("السعر", "Price"), tr("المخزون", "Stock"), tr("الحالة", "Status"), tr("إجراءات", "Actions")].map((h) => <th key={h} className="border-b border-[#E2DDD2] px-3.5 py-3.5 text-start font-medium">{h}</th>)}</tr></thead>
             <tbody>
               {visible.map((p) => {
                 const n = total(p);
@@ -187,6 +219,30 @@ function ProductsInner() {
                     <td className="border-b border-[#EFEBE2] px-3.5">{formatPrice(Number(p.price), lang)}</td>
                     <td className={`border-b border-[#EFEBE2] px-3.5 font-semibold ${n === 0 ? "text-[#8E3420]" : hasLow(p) ? "text-[#7A5300]" : ""}`}>{n}{n > 0 && hasLow(p) ? ` · ${tr("فيه أنواع قربت تخلص", "some low")}` : ""}</td>
                     <td className="border-b border-[#EFEBE2] px-3.5"><Badge className={!p.is_active ? "bg-[#EFEBE2] text-[#3A4450]" : n === 0 ? "bg-[#F8E3DD] text-[#8E3420]" : "bg-[#E1F0E6] text-[#1E6B3A]"}>{!p.is_active ? tr("مخفي", "Hidden") : n === 0 ? tr("خلصان", "Out of stock") : tr("معروض", "Active")}</Badge></td>
+                    <td className="border-b border-[#EFEBE2] px-2">
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={p.is_active}
+                          aria-label={`${p.is_active ? tr("إيقاف", "Deactivate") : tr("تفعيل", "Activate")} ${lang === "ar" ? p.name_ar : p.name_en}`}
+                          title={p.is_active ? tr("معروض — اضغطي للإيقاف", "Active — click to hide") : tr("مخفي — اضغطي للتفعيل", "Hidden — click to show")}
+                          disabled={busyId === p.id}
+                          onClick={() => toggleActive(p)}
+                          className="flex size-11 items-center justify-center disabled:opacity-50"
+                        >
+                          <span className={`relative h-6 w-10 rounded-full transition-colors duration-200 ${p.is_active ? "bg-[#1E6B3A]" : "bg-line-2"}`}>
+                            <span className={`absolute top-0.5 size-5 rounded-full bg-white shadow transition-[inset-inline-start] duration-200 ${p.is_active ? "start-[18px]" : "start-0.5"}`} />
+                          </span>
+                        </button>
+                        <button type="button" onClick={() => edit(p)} aria-label={`${tr("تعديل", "Edit")} ${lang === "ar" ? p.name_ar : p.name_en}`} title={tr("تعديل", "Edit")} className="flex size-11 items-center justify-center rounded-[10px] text-ink transition-colors hover:bg-[#EFEBE2]">
+                          <PencilSimple size={20} />
+                        </button>
+                        <button type="button" disabled={busyId === p.id} onClick={() => removeProduct(p)} aria-label={`${tr("حذف", "Delete")} ${lang === "ar" ? p.name_ar : p.name_en}`} title={tr("حذف", "Delete")} className="flex size-11 items-center justify-center rounded-[10px] text-[#8E3420] transition-colors hover:bg-[#FCEFEB] disabled:opacity-50">
+                          <Trash size={20} />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 );
               })}
